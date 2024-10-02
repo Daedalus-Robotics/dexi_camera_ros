@@ -211,6 +211,9 @@ CameraNode::CameraNode(const rclcpp::NodeOptions &options) : Node("camera", opti
   declare_parameter<int64_t>("width", {}, param_descr_ro);
   declare_parameter<int64_t>("height", {}, param_descr_ro);
 
+  // calibration file
+  declare_parameter<std::string>("calibration");
+
   // camera ID
   declare_parameter("camera", rclcpp::ParameterValue {}, param_descr_ro.set__dynamic_typing(true));
 
@@ -369,18 +372,20 @@ CameraNode::CameraNode(const rclcpp::NodeOptions &options) : Node("camera", opti
   set_parameter(rclcpp::Parameter("format", scfg.pixelFormat.toString()));
 
   // format camera name for calibration file
-  const libcamera::ControlList &props = camera->properties();
-  std::string cname = camera->id() + '_' + scfg.size.toString();
-  const std::optional<std::string> model = props.get(libcamera::properties::Model);
-  if (model)
-    cname = model.value() + '_' + cname;
+  std::string cname = get_parameter("calibration").as_string();
 
-  // clean camera name of non-alphanumeric characters
-  cname.erase(
-    std::remove_if(cname.begin(), cname.end(), [](const char &x) { return std::isspace(x); }),
-    cname.cend());
-  std::replace_if(
-    cname.begin(), cname.end(), [](const char &x) { return !std::isalnum(x); }, '_');
+  // const libcamera::ControlList &props = camera->properties();
+  // std::string cname = camera->id() + '_' + scfg.size.toString();
+  // const std::optional<std::string> model = props.get(libcamera::properties::Model);
+  // if (model)
+  //   cname = model.value() + '_' + cname;
+
+  // // clean camera name of non-alphanumeric characters
+  // cname.erase(
+  //   std::remove_if(cname.begin(), cname.end(), [](const char &x) { return std::isspace(x); }),
+  //   cname.cend());
+  // std::replace_if(
+  //   cname.begin(), cname.end(), [](const char &x) { return !std::isalnum(x); }, '_');
 
   if (!cim.setCameraName(cname))
     throw std::runtime_error("camera name must only contain alphanumeric characters");
