@@ -190,7 +190,7 @@ compressImageMsg(const sensor_msgs::msg::Image &source,
 }
 
 
-CameraNode::CameraNode(const rclcpp::NodeOptions &options) : Node("camera", options), cim(this)
+CameraNode::CameraNode(const rclcpp::NodeOptions &options) : Node("", options), cim(this)
 {
   // pixel format
   rcl_interfaces::msg::ParameterDescriptor param_descr_format;
