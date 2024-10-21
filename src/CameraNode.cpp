@@ -214,6 +214,12 @@ CameraNode::CameraNode(const rclcpp::NodeOptions &options) : Node("", options), 
   // calibration file
   declare_parameter<std::string>("calibration");
 
+  // exposure mode for libcamera
+  declare_parameter<int64_t>("exposure_mode", 0);
+
+  // awb mode for libcamera
+  declare_parameter<int64_t>("awb_mode", 0);
+
   // camera ID
   declare_parameter("camera", rclcpp::ParameterValue {}, param_descr_ro.set__dynamic_typing(true));
 
@@ -444,6 +450,10 @@ CameraNode::CameraNode(const rclcpp::NodeOptions &options) : Node("", options), 
   libcamera::ControlList controls_ = camera->controls();
   for (const auto &[id, value] : parameters)
     controls_.set(id, value);
+
+  // set libcamera controls from parameters
+  controls_.set(libcamera::controls::AeExposureMode, get_parameter("exposure_mode").as_int())
+  controls_.set(libcamera::controls::AwbMode, get_parameter("awb_mode").as_int())
 
   // start camera and queue all requests
   if (camera->start(&controls_))
