@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(camera_ros)
+project(dexi_camera_ros)
 
 set(CMAKE_CXX_STANDARD 17)
 

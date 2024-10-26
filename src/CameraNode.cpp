@@ -1,3 +1,4 @@
+#include "libcamera/control_ids.h"
 #include "clamp.hpp"
 #include "cv_to_pv.hpp"
 #include "format_mapping.hpp"
@@ -190,7 +191,7 @@ compressImageMsg(const sensor_msgs::msg::Image &source,
 }
 
 
-CameraNode::CameraNode(const rclcpp::NodeOptions &options) : Node("", options), cim(this)
+CameraNode::CameraNode(const rclcpp::NodeOptions &options) : Node("dexi_camera", options), cim(this)
 {
   // pixel format
   rcl_interfaces::msg::ParameterDescriptor param_descr_format;
@@ -452,8 +453,8 @@ CameraNode::CameraNode(const rclcpp::NodeOptions &options) : Node("", options), 
     controls_.set(id, value);
 
   // set libcamera controls from parameters
-  controls_.set(libcamera::controls::AeExposureMode, get_parameter("exposure_mode").as_int())
-  controls_.set(libcamera::controls::AwbMode, get_parameter("awb_mode").as_int())
+  controls_.set(libcamera::controls::AeExposureMode, get_parameter("exposure_mode").as_int());
+  controls_.set(libcamera::controls::AwbMode, get_parameter("awb_mode").as_int());
 
   // start camera and queue all requests
   if (camera->start(&controls_))
